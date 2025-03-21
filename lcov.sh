@@ -17,10 +17,11 @@ run_lcov() {
   pushd binutils-$version > /dev/null
 
   run_cmd lcov --zerocounters --directory ./
-  run_cmd lcov --base-directory . --ignore-errors version --capture --initial --directory ./ --output-file app.info
-  run_cmd ../install/bin/objdump.afl ../outputs-good/main/.cur_input
-  run_cmd lcov --no-checksum --directory ./ --capture --output-file app2.info
-  run_cmd genhtml --highlight --legend -output-directory ./html-coverage/ ./app2.info
+  run_cmd ../install/bin/objdump.afl -d ../inputs-good/input
+  run_cmd lcov --directory ./binutils \
+       --gcov-tool ../llvm-gcov.sh \
+       --capture -o cov.info
+  run_cmd genhtml --legend -output-directory ./html-coverage/ ./cov.info
 
   popd > /dev/null
 }
