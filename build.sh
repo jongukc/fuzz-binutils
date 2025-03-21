@@ -54,8 +54,12 @@ gen_compile_commands() {
 
     pushd binutils-$version > /dev/null
 
+    CC=$CC CXX=$CXX CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS ./configure --target=$TARGET --prefix=$PREFIX $config_opt
+    export AFL_USE_ASAN=1
+    bear -- make -j$(nproc)
+    unset AFL_USE_ASAN
+    
     popd > /dev/null
-
 }
 
 build_afl() {
@@ -114,7 +118,7 @@ build_lafintel() {
 
 #get_bintuils $binutils_version
 #configure_binutils $binutils_version
-#gen_compile_commands $binutils_version
+gen_compile_commands $binutils_version
 #build_cmplog $binutils_version
 #build_lafintel $binutils_version
-build_afl $binutils_version
+#build_afl $binutils_version
