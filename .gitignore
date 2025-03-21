@@ -2,3 +2,4 @@
 install/
 binutils-*
 binutils-*/
+outputs*
