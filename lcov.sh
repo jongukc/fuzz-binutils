@@ -17,7 +17,7 @@ run_lcov() {
   pushd binutils-$version > /dev/null
 
   run_cmd lcov --zerocounters --directory ./
-  ../install/bin/objdump.afl -d ../outputs-good/main/.cur_input
+  ../install/bin/objdump.afl -d ../outputs-good/main/.cur_input > /dev/null
   run_cmd lcov --directory ./ --gcov-tool ../llvm-gcov.sh --capture -o cov.info
   run_cmd genhtml --legend -output-directory ./html-coverage/ ./cov.info
 
