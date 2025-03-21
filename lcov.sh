@@ -17,29 +17,27 @@ run_lcov() {
   pushd binutils-$version > /dev/null
 
   run_cmd lcov --zerocounters --directory ./
-  run_cmd ../install/bin/objdump.afl -d ../inputs-good/input
-  run_cmd lcov --directory ./binutils \
-       --gcov-tool ../llvm-gcov.sh \
-       --capture -o cov.info
+  ../install/bin/objdump.afl -d ../outputs-good/main/.cur_input
+  run_cmd lcov --directory ./ --gcov-tool ../llvm-gcov.sh --capture -o cov.info
   run_cmd genhtml --legend -output-directory ./html-coverage/ ./cov.info
 
   popd > /dev/null
 }
 
-while getopts ":i" opt; do
-  case $opt in
-    i)
-      input_file=$OPTARG
-      echo "Input file: $input_file"
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument." >&2
-      usage
-      ;;
-  esac
-done
-
-shift $((OPTIND -1))
-
-binary=$1
+#while getopts ":i" opt; do
+#  case $opt in
+#    i)
+#      input_file=$OPTARG
+#      echo "Input file: $input_file"
+#      ;;
+#    :)
+#      echo "Option -$OPTARG requires an argument." >&2
+#      usage
+#      ;;
+#  esac
+#done
+#
+#shift $((OPTIND -1))
+#
+#binary=$1
 run_lcov
