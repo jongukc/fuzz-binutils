@@ -116,9 +116,9 @@ build_lafintel() {
 
 }
 
-#get_bintuils $binutils_version
 #configure_binutils $binutils_version
-gen_compile_commands $binutils_version
-#build_cmplog $binutils_version
-#build_lafintel $binutils_version
-#build_afl $binutils_version
+#gen_compile_commands $binutils_version
+get_bintuils $binutils_version
+build_afl $binutils_version
+build_cmplog $binutils_version
+build_lafintel $binutils_version
