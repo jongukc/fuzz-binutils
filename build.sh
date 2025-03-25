@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Global settings
-PREFIX=$(pwd)/install
+binutils_version=2.43
+PREFIX=$(pwd)/install-$binutils_version
 TARGET=x86_64-pc-linux-gnu
 CC=afl-clang-lto
-CXX=alf-clang-lto++
-CFLAGS="-g -O2 --coverage"
-LDFLAGS=--coverage
-binutils_version=2.44
+CXX=afl-clang-lto++
+CFLAGS="-g"
+CFLAGS_COV="-g -fprofile-instr-generate -fcoverage-mapping"
+LDFLAGS=""
 
 config_opt="-v \
             --disable-nls \
@@ -53,13 +54,29 @@ gen_compile_commands() {
     local version=$1
 
     pushd binutils-$version > /dev/null
-
-    CC=$CC CXX=$CXX CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS ./configure --target=$TARGET --prefix=$PREFIX $config_opt
+    find . -name "config.cache" | xargs rm
+    CC=clang CXX=clang++ CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS ./configure --target=$TARGET --prefix=$PREFIX $config_opt
     export AFL_USE_ASAN=1
     bear -- make -j$(nproc)
     unset AFL_USE_ASAN
+    find . -name "config.cache" | xargs rm
     
     popd > /dev/null
+}
+
+build_llvm_cov() {
+    local version=$1
+
+    pushd binutils-$version > /dev/null
+
+    make -j$(nproc) distclean
+    CC=clang CXX=clang++ CFLAGS=$CFLAGS_COV LDFLAGS=$LDFLAGS ./configure --target=$TARGET --prefix=$PREFIX $config_opt
+    make -j$(nproc)
+    make -j$(nproc) install
+
+    cp $PREFIX/bin/objdump $PREFIX/bin/objdump.llvmcov
+
+    popd > /dev/null 
 }
 
 build_afl() {
@@ -117,8 +134,9 @@ build_lafintel() {
 }
 
 #configure_binutils $binutils_version
-#gen_compile_commands $binutils_version
-get_bintuils $binutils_version
-build_afl $binutils_version
-build_cmplog $binutils_version
-build_lafintel $binutils_version
+gen_compile_commands $binutils_version
+#get_bintuils $binutils_version
+#build_llvm_cov $binutils_version
+#build_afl $binutils_version
+#build_cmplog $binutils_version
+#build_lafintel $binutils_version

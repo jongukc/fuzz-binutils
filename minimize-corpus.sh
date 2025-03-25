@@ -2,7 +2,7 @@
 
 TARGET="./install/bin/objdump.afl"
 INPUT_DIR="outputs-good"
-OUTPUT_DIR="outputs-afl-cmin"
+OUTPUT_DIR="outputs-2.43-minimized"
 
 if [ ! -d "$INPUT_DIR" ]; then
   echo "Invalid input directory: $INPUT_DIR"

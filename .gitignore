@@ -1,5 +1,5 @@
 .vscode/
-install/
+install*
 binutils-*
 binutils-*/
 outputs*
